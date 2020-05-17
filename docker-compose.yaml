@@ -54,8 +54,7 @@ services:
     build:
       context: ./xfce
     ports: 
-      - "5900:5900"
-      - "81:81"
+      - "5901:5901"
     
 
   # mopidy:

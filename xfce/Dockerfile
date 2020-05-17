@@ -1,3 +1,3 @@
-FROM x11docker/xfce:latest
+FROM soff/ubuntu-xfce-vnc:latest
 RUN apt-get update 
-EXPOSE 443 5900 5901 
+EXPOSE 5901 
