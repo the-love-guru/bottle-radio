@@ -40,40 +40,58 @@ services:
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=resolver"
 
-  mopidy:
-    build:
-      context: ./mopidy
-    command:
-      - "-o spotify/username=${SPOTIFY_USERNAME}"
-      - "-o spotify/password=${SPOTIFY_PASSWORD}"
-      - "-o spotify/client_id=${SPOTIFY_CLIENT_ID}"
-      - "-o spotify/client_secret=${SPOTIFY_CLIENT_SECRET}"
-    depends_on:
-      - liquidsoap
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mopidy.rule=Host(`spotify.${DOMAIN}`)"
-      - "traefik.http.routers.mopidy.tls=true"
-      - "traefik.http.routers.mopidy.tls.certresolver=resolver"
-      - "traefik.http.middlewares.mopidy_auth.basicauth.users=${MOPIDY_AUTH}"
-      - "traefik.http.routers.mopidy.middlewares=mopidy_auth@docker"
-
-  liquidsoap:
-    build:
-      context: ./liquidsoap
-    environment:
-      - LIQUIDSOAP_DJ_USERNAME=${LIQUIDSOAP_DJ_USERNAME}
-      - LIQUIDSOAP_DJ_PASSWORD=${LIQUIDSOAP_DJ_PASSWORD}
-      - ICECAST_SOURCE_PASSWORD=${ICECAST_SOURCE_PASSWORD}
+  guac:
+    image: oznu/guacamole:latest
     volumes:
-      - ./conf:/etc/liquidsoap
-    depends_on:
-      - icecast
+      - ./guac:/config
     labels:
       - "traefik.enable=true"
-      - "traefik.tcp.routers.liquidsoap.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.liquidsoap.entryPoints=streaming"
-      - "traefik.tcp.services.liquidsoap.loadbalancer.server.port=8005"
+      - "traefik.http.routers.guac.rule=Host(`guac.${DOMAIN}`)"
+      - "traefik.http.routers.guac.tls=true"
+      - "traefik.http.routers.guac.tls.certresolver=resolver"
+
+  xfce:
+    build:
+      context: ./xfce
+    ports: 
+      - "5900:5900"
+      - "81:81"
+    
+
+  # mopidy:
+  #   build:
+  #     context: ./mopidy
+  #   command:
+  #     - "-o spotify/username=${SPOTIFY_USERNAME}"
+  #     - "-o spotify/password=${SPOTIFY_PASSWORD}"
+  #     - "-o spotify/client_id=${SPOTIFY_CLIENT_ID}"
+  #     - "-o spotify/client_secret=${SPOTIFY_CLIENT_SECRET}"
+  #   depends_on:
+  #     - liquidsoap
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.mopidy.rule=Host(`spotify.${DOMAIN}`)"
+  #     - "traefik.http.routers.mopidy.tls=true"
+  #     - "traefik.http.routers.mopidy.tls.certresolver=resolver"
+  #     - "traefik.http.middlewares.mopidy_auth.basicauth.users=${MOPIDY_AUTH}"
+  #     - "traefik.http.routers.mopidy.middlewares=mopidy_auth@docker"
+
+  # liquidsoap:
+  #   build:
+  #     context: ./liquidsoap
+  #   environment:
+  #     - LIQUIDSOAP_DJ_USERNAME=${LIQUIDSOAP_DJ_USERNAME}
+  #     - LIQUIDSOAP_DJ_PASSWORD=${LIQUIDSOAP_DJ_PASSWORD}
+  #     - ICECAST_SOURCE_PASSWORD=${ICECAST_SOURCE_PASSWORD}
+  #   volumes:
+  #     - ./conf:/etc/liquidsoap
+  #   depends_on:
+  #     - icecast
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.tcp.routers.liquidsoap.rule=HostSNI(`*`)"
+  #     - "traefik.tcp.routers.liquidsoap.entryPoints=streaming"
+  #     - "traefik.tcp.services.liquidsoap.loadbalancer.server.port=8005"
 
   icecast:
     image: moul/icecast
