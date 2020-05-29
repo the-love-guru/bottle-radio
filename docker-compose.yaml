@@ -51,10 +51,12 @@ services:
       - "traefik.http.routers.guac.tls.certresolver=resolver"
 
   xfce:
-    build:
-      context: ./xfce
+    image: soff/ubuntu-xfce-vnc:latest
+    volumes:
+      - ./xfce:/config
     ports: 
       - "5901:5901"
+
     
 
   # mopidy:
