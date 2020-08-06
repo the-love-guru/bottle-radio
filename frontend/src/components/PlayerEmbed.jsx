@@ -6,7 +6,6 @@ import {
   SliderThumb,
   Box,
   Flex,
-  PseudoBox,
   useColorMode,
   Text,
   Grid,
@@ -82,7 +81,7 @@ const PlayerEmbed = () => {
             alignItems='center'
             gap={1}
           >
-            <PseudoBox
+            <Box
               gridRow='1/4'
               size='80px'
               aria-label='Play toggle'
@@ -108,11 +107,17 @@ const PlayerEmbed = () => {
                 onChange={changeVolume}
                 width={80}
               >
-                <SliderTrack />
-                <SliderFilledTrack bg='tomato' />
+                <SliderTrack>
+                  <SliderFilledTrack bg='tomato' />
+                </SliderTrack>
                 <SliderThumb size={2} />
               </Slider>
-              <Box size='20px' as={muted ? FaVolumeMute : FaVolumeUp} ml={3} />
+              <Box
+                w='20px'
+                h='20px'
+                as={muted ? FaVolumeMute : FaVolumeUp}
+                ml={3}
+              />
               <audio
                 id='player'
                 autoPlay
